@@ -25,3 +25,16 @@ services:
     environment:
       - GRADLE_USER_HOME=cache
       - SPRING_PROFILES_ACTIVE=dev
+  dow-jones-api:
+    image: anapsix/alpine-java:8_jdk_unlimited
+    ports:
+      - '8081:8081'
+    working_dir: /app
+    volumes:
+      - ./dow-jones-api:/app
+    depends_on:
+      - eureka 
+    command: './gradlew bootRun'
+    environment:
+      - GRADLE_USER_HOME=cache
+      - SPRING_PROFILES_ACTIVE=dev
