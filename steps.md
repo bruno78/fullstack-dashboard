@@ -269,14 +269,14 @@ telling where Eureka lives so it can register on start-up.
 7. Run docker-compose and check the URLs:
 localhost:8761 API-Gateway
 localhost:8080/routes you should see /users route
-localhost:8080/users you should see "Dow Jones Api is working"
-localhost:8081 you should also see "Dow Jones Api is working"
+localhost:8080/users you should see "Users Api is working"
+localhost:8081 you should also see "Users Api is working"
 
 8. Git add and commit
 
 ======= DONE WITH API SETUP BASICS! =========
 
-## Integrating Database to the Dow Jones Api
+## Integrating Database to the Users Api
 
 1. In the root directory not on api or app.
 Setup the database on docker-compose.yml
