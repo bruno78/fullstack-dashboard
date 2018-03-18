@@ -76,3 +76,110 @@ eureka-server project
 2. use the command to create API gateway:
 `spring init api-gateway --build=gradle`
 
+3. open intellij and open the project by importing from existing source. 
+
+4. allow gradle to be imported into the project
+
+5. go to buid.gradle and add these dependencies:
+```
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-netflix:1.4.0.RELEASE'
+    }
+}
+
+dependencies {
+    compile 'org.springframework.cloud:spring-cloud-starter-zuul'
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka'
+}
+
+```
+it will ask to either to import changes or auto import changes, select "auto
+import changes" 
+
+6. At java/com.example.apigateway rename DemoApplication file to 
+ZuulGatewayApplicaiton and add these:
+
+```
+package com.example.apigateway;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+
+@SpringBootApplication
+@EnableZuulProxy
+public class ZuulGatewayApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ZuulGatewayApplication.class, args);
+    }
+}
+```
+
+7. In the application-dev.properties set up the configuration 
+
+```
+spring.application.name=api-gateway
+
+management.security.enabled=false
+
+eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka/
+
+# Add color to log output
+spring.output.ansi.enabled=ALWAYS
+```
+This config gives the application a name, which will be passed to Eureka.
+It also tells Spring to turn off security in the dev profile. We need this when we check our routes later on.
+
+*This also tells our app where the Eureka lives.* (look at the line that shows 
+eureka:8761
+
+====DONE SETTING UP API-GATEWAY APP!!!====
+
+## Setting up docker-compose
+
+1. In the root directory microservices-project NOT in the api-gateway, create
+a file docker-compose.yml and add this: 
+
+```
+version: '3'
+
+services:
+  eureka:
+    image: anapsix/alpine-java:8_jdk_unlimited
+    ports:
+      - '8761:8761'
+    working_dir: /app
+    volumes:
+      - ./eureka-server:/app
+    command: './gradlew bootRun'
+    environment:
+      - GRADLE_USER_HOME=cache
+      - SPRING_PROFILES_ACTIVE=dev
+  api-gateway:
+    image: anapsix/alpine-java:8_jdk_unlimited
+    ports:
+      - '8080:8080'
+    working_dir: /app
+    volumes:
+      - ./api-gateway:/app
+    depends_on:
+      - eureka
+    command: './gradlew bootRun'
+    environment:
+      - GRADLE_USER_HOME=cache
+      - SPRING_PROFILES_ACTIVE=dev
+
+```
+Note: All apps must be added here, and they need to have different ports for
+each other. 
+
+Note2: If you want to add just one service: If you want to start just one service, you can run docker-compose up <app-name> (e.g. docker-compose 
+up api-gateway.)
+
+2. docker-compose up 
+It will take a while if this loading for the first time, because gradle needs 
+to build its cache, but if everything runs fine, you are able to start creating
+additional services
+
