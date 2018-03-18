@@ -6,7 +6,7 @@ create project folder to host microservices
 2. Use spring command to create eureka-server "app"
 `spring init eureka-server --build=gradle`
 
-3. go to eureka-server cd eureka-server 
+3. go to eureka-server cd eureka-server
 
 3.1 open intellij, open project from existing source
 3.2 allow gradle to be imported to project
@@ -59,24 +59,24 @@ eureka.client.registerWithEureka=false
 eureka.client.fetchRegistry=false
 eureka.server.waitTimeInMsWhenSyncEmpty=0
 ```
-This configures the port of the app in the dev environment 
+This configures the port of the app in the dev environment
 
-7. Test the application by running the command 
+7. Test the application by running the command
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 
 A Eureka page should load up at localhost:8761
 
-8. Git add and commit 
+8. Git add and commit
 
 ===DONE WITH FIRST SERVICE REGISTRY EUREKA SERVER APP!!!===
 
-1. Make sure you are in the root directory microservices-project NOT in the 
-eureka-server project 
+1. Make sure you are in the root directory microservices-project NOT in the
+eureka-server project
 
 2. use the command to create API gateway:
 `spring init api-gateway --build=gradle`
 
-3. open intellij and open the project by importing from existing source. 
+3. open intellij and open the project by importing from existing source.
 
 4. allow gradle to be imported into the project
 
@@ -95,9 +95,9 @@ dependencies {
 
 ```
 it will ask to either to import changes or auto import changes, select "auto
-import changes" 
+import changes"
 
-6. At java/com.example.apigateway rename DemoApplication file to 
+6. At java/com.example.apigateway rename DemoApplication file to
 ZuulGatewayApplicaiton and add these:
 
 ```
@@ -117,7 +117,7 @@ public class ZuulGatewayApplication {
 }
 ```
 
-7. In the application-dev.properties set up the configuration 
+7. In the application-dev.properties set up the configuration
 
 ```
 spring.application.name=api-gateway
@@ -132,7 +132,7 @@ spring.output.ansi.enabled=ALWAYS
 This config gives the application a name, which will be passed to Eureka.
 It also tells Spring to turn off security in the dev profile. We need this when we check our routes later on.
 
-*This also tells our app where the Eureka lives.* (look at the line that shows 
+*This also tells our app where the Eureka lives.* (look at the line that shows
 eureka:8761
 
 ====DONE SETTING UP API-GATEWAY APP!!!====
@@ -140,7 +140,7 @@ eureka:8761
 ## Setting up docker-compose
 
 1. In the root directory microservices-project NOT in the api-gateway, create
-a file docker-compose.yml and add this: 
+a file docker-compose.yml and add this:
 
 ```
 version: '3'
@@ -173,13 +173,13 @@ services:
 
 ```
 Note: All apps must be added here, and they need to have different ports for
-each other. 
+each other.
 
-Note2: If you want to add just one service: If you want to start just one service, you can run docker-compose up <app-name> (e.g. docker-compose 
+Note2: If you want to add just one service: If you want to start just one service, you can run docker-compose up <app-name> (e.g. docker-compose
 up api-gateway.)
 
-2. docker-compose up 
-It will take a while if this loading for the first time, because gradle needs 
+2. docker-compose up
+It will take a while if this loading for the first time, because gradle needs
 to build its cache, but if everything runs fine, you are able to start creating
 additional services
 
@@ -187,10 +187,10 @@ additional services
 
 =======DONE WITH API-GATEWAY, SERVICE REGISTRY AND DOCKER COMPOSE!!!===
 
-## Creating first API 
+## Creating first API
 
-1. On the root directory create spring boot app "dow-jones-api"
-spring init dow-jones-api --build=gradle 
+1. On the root directory create spring boot app "users-api"
+spring init users-api --build=gradle
 
 2. Open the project on IntelliJ by importing as an existing source
 
@@ -210,15 +210,15 @@ dependencies {
 }
 ```
 
-4. in the Java/com.example.dowjonesapi/ rename the file DemoApplication to:
-DowJonesApiApplication and add these modifications:
+4. in the Java/com.example.usersapi/ rename the file DemoApplication to:
+UsersApiApplication and add these modifications:
 
 ```
 @SpringBootApplication
 @EnableEurekaClient
 @RestController
 public class UsersApiApplication {
-   
+
     // this is only for testing. It will be removed later 	
     @RequestMapping("/")
     public String home() {
@@ -231,13 +231,13 @@ public class UsersApiApplication {
 }
 ```
 
-5. in src/main/resources Setup the configuration for dev environment by 
+5. in src/main/resources Setup the configuration for dev environment by
 creating application-dev.properties and adding this:
 
-``` 
+```
 server.port=8081
 
-spring.application.name=dowjones
+spring.application.name=users
 
 eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka/
 
@@ -245,21 +245,21 @@ eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka/
 spring.output.ansi.enabled=ALWAYS
 ```
 NOTE: Here you are setting up the port and giving the application a name.
-Meaning any requests to /dowjones will lead to the app. You are also 
+Meaning any requests to /users will lead to the app. You are also
 telling where Eureka lives so it can register on start-up.
 
-6. Add the new api (dowjones) to docker: docker-compose.yml
+6. Add the new api (users) to docker: docker-compose.yml
 
 ```
-  dow-jones-api:
+  users-api:
     image: anapsix/alpine-java:8_jdk_unlimited
     ports:
       - '8081:8081'
     working_dir: /app
     volumes:
-      - ./dow-jones-api:/app
+      - ./users-api:/app
     depends_on:
-      - eureka 
+      - eureka
     command: './gradlew bootRun'
     environment:
       - GRADLE_USER_HOME=cache
@@ -268,17 +268,17 @@ telling where Eureka lives so it can register on start-up.
 
 7. Run docker-compose and check the URLs:
 localhost:8761 API-Gateway
-localhost:8080/routes you should see /dowjones route 
-localhost:8080/dowjones you should see "Dow Jones Api is working"
+localhost:8080/routes you should see /users route
+localhost:8080/users you should see "Dow Jones Api is working"
 localhost:8081 you should also see "Dow Jones Api is working"
 
-8. Git add and commit 
+8. Git add and commit
 
 ======= DONE WITH API SETUP BASICS! =========
 
-## Integrating Database to the Dow Jones Api 
+## Integrating Database to the Dow Jones Api
 
-1. In the root directory not on api or app. 
+1. In the root directory not on api or app.
 Setup the database on docker-compose.yml
 
 ```
@@ -294,8 +294,8 @@ Setup the database on docker-compose.yml
 
 NOTE: I've changed the database so I can start a new versioning.
 
-2. Go to down-jones api, go to resources folder and add these lines to connect the database
-to the dow jones api in the application-dev.properties
+2. Go to users api, go to resources folder and add these lines to connect the database
+to the users api in the application-dev.properties
 
 ```
  spring.datasource.url=jdbc:postgresql://postgresdev:5432/gapgdev
@@ -303,14 +303,14 @@ to the dow jones api in the application-dev.properties
  spring.datasource.password=password
 
 flyway.baselineOnMigrate=true
-flyway.table=schema_dj
+flyway.table=schema_u
 ```
 NOTE: flyway in this case will connect different tables from different
 apis to the same database. So DON'T FORGET to assign a different schema to
-a different app. 
-`flyway.table=schema_dj`
+a different app.
+`flyway.table=schema_u`
 
-3. On the build.gradle of the dow-jones api add the postgress and the 
+3. On the build.gradle of the users api add the postgress and the
 flway dependencies.
 
 ```
@@ -330,103 +330,3 @@ dependencies {
     compile 'org.flywaydb:flyway-core'
 
 4. On the resources folder create /db/migration folders
-
-5. Following Flyway convention ({DBVersion}__{migration_name}), create a
-file V1__create_dowjones_table.sql and add:
-
-```
-create table DOWJONES (
-  ID serial,
-  DAY date, 
-  DJIA integer NOT NULL
-);
-
-``` 
-
-6. Add file afterMigrate.sql to db/migration folder and add this migration
-
-```
-INSERT INTO DOWJONES
-    (DAY, DJIA)
-VALUES
-    (DATE '2018-03-12', 25178.61),
-    (DATE '2018-03-13', 25007.03),
-    (DATE '2018-03-14', 24758.12),
-    (DATE '2018-03-15', 24873.66),
-    (DATE '2018-03-16', 24946.51);
-```
-
-7. for test just start:
-docker-compose up 
-
-NOTE: before connecting the api to docker, test it alone first. 
-
-8. testing db
-psql -h localhost -p 5432 -U postgres
-\c gadgdev
-\d+
-select * from gapgdev
-
-It should show a seedded database
-\q 
-to quit the database 
-
-9. Setting up the Model Controller and Repository
-In the folder src/main/java/com/dowjonesapi/ create these folders
-with respective files
-
-controllers
-  - DowJonesValuesController.java
-models
-  - DowJonesValue.java
-repositories
-  - DowJonesValueRepository.java
-
-10. Adding Lombok to the project to speed up the models process and not
-to have to add getters and setters
-
-in the build.gradle file add this line in the dependency area:
-`compileOnly 'org.projectlombok:lombok'`
-
-11. Add to each file:
- - DowJonesValuesController.java
-```
-
-```
- - DowJonesValue.java
-```
-package com.example.dowjonesapi.models;
-
-import lombok.*;
-
-import javax.persistence.*;
-import java.sql.Date;
-
-@Data
-@AllArgsConstructor @NoArgsConstructor @Getter @Setter
-@Entity
-@Table(name="DOWJONES")
-public class DowJonesValue {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "DAY")
-    private Date valueDate;
-
-    @Column(name = "DJIA")
-    private int value;
-
-
-}
-```
-
-- DowJonesValueRepository.java
-```
-public interface DowJonesValueRepository extends CrudRepository<DowJonesValue, Long> {
-}
-
-```
-
-
