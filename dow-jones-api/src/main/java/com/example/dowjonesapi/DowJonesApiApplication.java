@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DowJonesApiApplication {
 
-	@RequestMapping("/")
-	public String Home() {
-		return "Dow Jones Api is working!";
-	}
+//	@RequestMapping("/")
+//	public String Home() {
+//		return "Dow Jones Api is working!";
+//	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(DowJonesApiApplication.class, args);

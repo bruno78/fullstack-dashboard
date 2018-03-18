@@ -36,5 +36,6 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	runtime('org.postgresql:postgresql')
 	compile 'org.flywaydb:flyway-core'
+	compileOnly 'org.projectlombok:lombok'
 }
 
